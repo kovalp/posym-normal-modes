@@ -1,5 +1,7 @@
-from posym.operations import Operation
 import numpy as np
+
+from posym_normal_modes.operations import Operation
+from posym_normal_modes.permutations import get_permutation, get_measure
 
 
 def prepare_vector(positions, vector):
@@ -27,7 +29,7 @@ class Inversion(Operation):
         operation = inversion()
         operated_coor = np.dot(operation, coordinates.T).T
 
-        permu = self.get_permutation(operation, coordinates, symbols)
+        permu = get_permutation(operation, coordinates, symbols)
 
         measure_mode = []
         for mode in modes:
@@ -42,16 +44,13 @@ class Inversion(Operation):
     def get_measure_atom(self, coordinates, symbols, orientation=None):
 
         operation = inversion()
-        permu = self.get_permutation(operation, coordinates, symbols)
+        permu = get_permutation(operation, coordinates, symbols)
         measure_atoms = np.array([1 if i == p else 0 for i, p in enumerate(permu)])
 
         return np.sum(measure_atoms)
 
     def get_measure_xyz(self, orientation=None):
-
         operation = inversion()
-        # permu = self.get_permutation(operation, coordinates, symbols)
-        #permu_mask = np.array([1 if i == p else 0 for i, p in enumerate(permu)])
 
         measure_mode = []
         for axis in [[1, 0, 0], [0, 1, 0], [0, 0, 1]]:
@@ -63,7 +62,7 @@ class Inversion(Operation):
     def get_measure_pos(self, coordinates, symbols, orientation=None, normalized=True):
 
         operation = inversion()
-        mesure_coor, permu = self.get_permutation(operation, coordinates, symbols, return_dot=True)
+        mesure_coor = get_measure(operation, coordinates, symbols)
 
         if normalized:
             mesure_coor /= np.einsum('ij, ij -> ', coordinates, coordinates)

@@ -1,4 +1,4 @@
-from posym import SymmetryModes
+from posym_normal_modes import SymmetryModes
 
 
 def test_normal_modes() -> None:

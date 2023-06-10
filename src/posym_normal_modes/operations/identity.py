@@ -1,4 +1,4 @@
-from posym.operations import Operation
+from posym_normal_modes.operations import Operation
 import numpy as np
 
 

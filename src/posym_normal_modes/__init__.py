@@ -1,8 +1,8 @@
 __author__ = 'Abel Carreras'
 __version__ = '0.5.4'
 
-from posym.tools import list_round
-from posym.pointgroup import PointGroup
+from posym_normal_modes.tools import list_round
+from posym_normal_modes.pointgroup import PointGroup
 from scipy.spatial.transform import Rotation as R
 from scipy.optimize import minimize
 import numpy as np

@@ -1,5 +1,5 @@
 import numpy as np
-from posym.generate_tables import get_table_from_label
+from posym_normal_modes.generate_tables import get_table_from_label
 
 
 class PointGroup:

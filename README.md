@@ -29,8 +29,9 @@ Use as a simple symmetry calculation
 ------------------------------------
 Posym allows to create basic continuous symmetry python objects that can be operated using 
 direct sum (+) and direct product (*).
+
 ```python
-from posym import PointGroup, SymmetryBase
+from posym_normal_modes import PointGroup, SymmetryBase
 
 pg = PointGroup(group='Td')
 print(pg)
@@ -48,32 +49,33 @@ print('e * (e + a1):', e * (e + a1))
 Determine the symmetry of normal modes
 --------------------------------------
 Symmetry objects can be obtained from normal modes using `SymmetryModes`.
-```python
-from posym import SymmetryModes
 
-coordinates = [[ 0.00000, 0.0000000, -0.0808819],
+```python
+from posym_normal_modes import SymmetryModes
+
+coordinates = [[0.00000, 0.0000000, -0.0808819],
                [-1.43262, 0.0000000, -1.2823700],
-               [ 1.43262, 0.0000000, -1.2823700]]
+               [1.43262, 0.0000000, -1.2823700]]
 
 symbols = ['O', 'H', 'H']
 
-normal_modes = [[[ 0.,     0.,    -0.075],
-                 [-0.381, -0.,     0.593],
-                 [ 0.381, -0.,     0.593]], # mode 1
+normal_modes = [[[0., 0., -0.075],
+                 [-0.381, -0., 0.593],
+                 [0.381, -0., 0.593]],  # mode 1
 
-                [[-0.   , -0.,     0.044],
-                 [-0.613, -0.,    -0.35 ],
-                 [ 0.613,  0.,    -0.35 ]], # mode 2
+                [[-0., -0., 0.044],
+                 [-0.613, -0., -0.35],
+                 [0.613, 0., -0.35]],  # mode 2
 
-                [[-0.073, -0.,    -0.   ],
-                 [ 0.583,  0.,     0.397],
-                 [ 0.583,  0.,    -0.397]]] # mode 3
+                [[-0.073, -0., -0.],
+                 [0.583, 0., 0.397],
+                 [0.583, 0., -0.397]]]  # mode 3
 
 frequencies = [1737.01, 3988.5, 4145.43]
 
 sym_modes_gs = SymmetryModes(group='c2v', coordinates=coordinates, modes=normal_modes, symbols=symbols)
 for i in range(len(normal_modes)):
-    print('Mode {:2}: {:8.3f} :'.format(i + 1, frequencies[i]), sym_modes_gs.get_state_mode(i))
+  print('Mode {:2}: {:8.3f} :'.format(i + 1, frequencies[i]), sym_modes_gs.get_state_mode(i))
 
 print('Total symmetry: ', sym_modes_gs)
 
@@ -82,14 +84,15 @@ print('Total symmetry: ', sym_modes_gs)
 Determine the symmetry of a molecular geometry
 ----------------------------------------------
 Continuous symmetry measure (CSM) is obtained using `measure` method.
-```python
-from posym import SymmetryMoleculeBase
 
-coordinates = [[ 0.0000000000,  0.0000000000,  0.0000000000],
-               [ 0.5541000000,  0.7996000000,  0.4965000000],
-               [ 0.6833000000, -0.8134000000, -0.2536000000],
-               [-0.7782000000, -0.3735000000,  0.6692000000],
-               [-0.4593000000,  0.3874000000, -0.9121000000]]
+```python
+from posym_normal_modes import SymmetryMoleculeBase
+
+coordinates = [[0.0000000000, 0.0000000000, 0.0000000000],
+               [0.5541000000, 0.7996000000, 0.4965000000],
+               [0.6833000000, -0.8134000000, -0.2536000000],
+               [-0.7782000000, -0.3735000000, 0.6692000000],
+               [-0.4593000000, 0.3874000000, -0.9121000000]]
 
 symbols = ['C', 'H', 'H', 'H', 'H']
 

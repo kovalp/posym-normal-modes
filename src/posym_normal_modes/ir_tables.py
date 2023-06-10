@@ -1,10 +1,10 @@
 import pandas as pd
 import numpy as np
-from posym.operations.identity import Identity
-from posym.operations.rotation import Rotation
-from posym.operations.reflection import Reflection
-from posym.operations.inversion import Inversion
-from posym.operations.irotation import ImproperRotation
+from posym_normal_modes.operations.identity import Identity
+from posym_normal_modes.operations.rotation import Rotation
+from posym_normal_modes.operations.reflection import Reflection
+from posym_normal_modes.operations.inversion import Inversion
+from posym_normal_modes.operations.irotation import ImproperRotation
 
 
 def real_radical(m, n):
