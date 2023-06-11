@@ -52,7 +52,6 @@ class SymmetryMoleculeBase(SymmetryBase):
 
     def _setup_structure(self, coordinates, symbols, group, center, orientation_angles,
                          fast_optimization=True):
-
         self._coordinates = np.array(coordinates)
         self.permutations = Permutations(self._coordinates, symbols)
         self._symbols = symbols
@@ -91,7 +90,6 @@ class SymmetryMoleculeBase(SymmetryBase):
         This function uses all operations of the group and averages the overlap of equivalent
         operations
         """
-
         rot = Rotation.from_euler('zyx', angles, degrees=True)
 
         operator_measures = []
@@ -105,7 +103,7 @@ class SymmetryMoleculeBase(SymmetryBase):
         # get most symmetric IR value
         return -np.dot(operator_measures, self._pg.trans_matrix_inv[0])
 
-    def get_orientation(self, fast_optimization=True, scan_step=30):
+    def get_orientation(self, fast_optimization=True, scan_step=10):
         """
         get orientation angles for optimum orientation.
         Use full=False to orient perfect symmetric molecules.
@@ -139,13 +137,12 @@ class SymmetryMoleculeBase(SymmetryBase):
         return cache_orientation[hash_num]
 
     def get_oriented_operations(self):
-        rotmol = Rotation.from_euler('zyx', self.orientation_angles, degrees=True)
-
+        rot = Rotation.from_euler('zyx', self.orientation_angles, degrees=True)
         operations_list = []
         for operation in self._pg.operations:
             for sub_operation in self._pg.get_sub_operations(operation.label):
                 sub_operation = copy.deepcopy(sub_operation)
-                sub_operation.apply_rotation(rotmol)
+                sub_operation.apply_rotation(rot)
                 operations_list.append(sub_operation)
 
         return operations_list
