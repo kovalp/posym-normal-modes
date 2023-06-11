@@ -52,7 +52,6 @@ class SymmetryMoleculeBase(SymmetryBase):
 
     def _setup_structure(self, coordinates, symbols, group, center, orientation_angles,
                          fast_optimization=True):
-
         self._coordinates = np.array(coordinates)
         self.permutations = Permutations(self._coordinates, symbols)
         self._symbols = symbols
@@ -88,9 +87,9 @@ class SymmetryMoleculeBase(SymmetryBase):
 
     def optimization_function_full(self, angles):
         """
-        This function uses all operations of the group and averages the overlap of equivalent operations
+        This function uses all operations of the group and averages the overlap of equivalent
+        operations
         """
-
         rot = Rotation.from_euler('zyx', angles, degrees=True)
 
         operator_measures = []
@@ -132,19 +131,18 @@ class SymmetryMoleculeBase(SymmetryBase):
                 ref_value = value
                 guess_angles = angles
 
-        result = minimize(optimization_function, guess_angles, method='CG',)
+        result = minimize(optimization_function, guess_angles, method='CG')
 
         cache_orientation[hash_num] = result.x
         return cache_orientation[hash_num]
 
     def get_oriented_operations(self):
-        rotmol = Rotation.from_euler('zyx', self.orientation_angles, degrees=True)
-
+        rot = Rotation.from_euler('zyx', self.orientation_angles, degrees=True)
         operations_list = []
         for operation in self._pg.operations:
             for sub_operation in self._pg.get_sub_operations(operation.label):
                 sub_operation = copy.deepcopy(sub_operation)
-                sub_operation.apply_rotation(rotmol)
+                sub_operation.apply_rotation(rot)
                 operations_list.append(sub_operation)
 
         return operations_list
