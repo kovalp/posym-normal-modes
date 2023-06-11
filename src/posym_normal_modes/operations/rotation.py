@@ -1,17 +1,15 @@
-from scipy.spatial.transform import Rotation as R
+from scipy.spatial.transform import Rotation as Rotation_scipy
 import numpy as np
 
 from posym_normal_modes.operations import Operation
-from posym_normal_modes.permutations import get_permutation, get_measure
+from posym_normal_modes.permutations import get_permutation, Permutations
 from posym_normal_modes.tools import standardize_vector
 
 
 def rotation(angle, rotation_axis):
-
     rotation_vector = angle * np.array(rotation_axis) / np.linalg.norm(rotation_axis)
-    rotation = R.from_rotvec(rotation_vector)
-
-    return rotation.as_matrix()
+    scipy_rotation = Rotation_scipy.from_rotvec(rotation_vector)
+    return scipy_rotation.as_matrix()
 
 
 def prepare_vector(positions, vector):
@@ -96,24 +94,17 @@ class Rotation(Operation):
 
         return np.sum(measure_mode_total)
 
-    def get_measure_pos(self, coordinates, symbols, orientation=None, normalized=True):
-
+    def get_measure_pos(self, permutations: Permutations, orientation=None, normalized=True):
         rotated_axis = self._axis if orientation is None else orientation.apply(self._axis)
-
-        measure_coor = []
-        # for angle in np.linspace(2*np.pi/self._order, 2*np.pi, self._order)[:-1]:
-        for angle in [2 * np.pi / self._order * self._exp, -2 * np.pi / self._order * self._exp]:
-            operation = rotation(angle, rotated_axis)
-
-            mesure_coor = get_measure(operation, coordinates, symbols)
-            measure_coor.append(mesure_coor)
-
-        measure_coor_total = np.average(measure_coor)
+        angle1 = 2 * np.pi / self._order * self._exp
+        measure1 = permutations.get_measure(rotation(angle1, rotated_axis))
+        measure2 = permutations.get_measure(rotation(-angle1, rotated_axis))
+        measure_total = (measure2 + measure1) * 0.5
 
         if normalized:
-            measure_coor_total /= np.einsum('ij, ij -> ', coordinates, coordinates)
+            measure_total /= permutations.norm
 
-        return measure_coor_total
+        return measure_total
 
     def get_overlap_func(self, op_function1, op_function2, orientation=None):
 

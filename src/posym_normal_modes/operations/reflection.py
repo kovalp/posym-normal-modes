@@ -1,7 +1,7 @@
 import numpy as np
 
 from posym_normal_modes.operations import Operation
-from posym_normal_modes.permutations import get_permutation, get_measure
+from posym_normal_modes.permutations import get_permutation, get_measure, Permutations
 from posym_normal_modes.tools import standardize_vector
 
 
@@ -68,17 +68,14 @@ class Reflection(Operation):
 
         return np.sum(measure_mode)
 
-    def get_measure_pos(self, coordinates, symbols, orientation=None, normalized=True):
-
+    def get_measure_pos(self, permutations: Permutations, orientation=None, normalized=True):
         rotated_axis = self._axis if orientation is None else orientation.apply(self._axis)
-
-        operation = reflection(rotated_axis)
-        mesure_coor = get_measure(operation, coordinates, symbols)
+        measure = permutations.get_measure(reflection(rotated_axis))
 
         if normalized:
-            mesure_coor /= np.einsum('ij, ij -> ', coordinates, coordinates)
+            measure /= permutations.norm
 
-        return mesure_coor
+        return measure
 
     def get_overlap_func(self, op_function1, op_function2, orientation=None):
 
