@@ -721,7 +721,7 @@ def get_table_from_label(label):
             code = order = None
 
         functions = {'d': get_dn, 'dd': get_dnd, 'dh': get_dnh,
-                     'c': get_cn, 'ch': get_cnh, 'cv':get_cnv,
+                     'c': get_cn, 'ch': get_cnh, 'cv': get_cnv,
                      's': get_sn}
 
         try:

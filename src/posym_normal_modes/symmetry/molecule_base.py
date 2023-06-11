@@ -88,7 +88,8 @@ class SymmetryMoleculeBase(SymmetryBase):
 
     def optimization_function_full(self, angles):
         """
-        This function uses all operations of the group and averages the overlap of equivalent operations
+        This function uses all operations of the group and averages the overlap of equivalent
+        operations
         """
 
         rot = Rotation.from_euler('zyx', angles, degrees=True)
@@ -104,7 +105,7 @@ class SymmetryMoleculeBase(SymmetryBase):
         # get most symmetric IR value
         return -np.dot(operator_measures, self._pg.trans_matrix_inv[0])
 
-    def get_orientation(self, fast_optimization=True, scan_step=10):
+    def get_orientation(self, fast_optimization=True, scan_step=30):
         """
         get orientation angles for optimum orientation.
         Use full=False to orient perfect symmetric molecules.
@@ -132,7 +133,7 @@ class SymmetryMoleculeBase(SymmetryBase):
                 ref_value = value
                 guess_angles = angles
 
-        result = minimize(optimization_function, guess_angles, method='CG',)
+        result = minimize(optimization_function, guess_angles, method='CG')
 
         cache_orientation[hash_num] = result.x
         return cache_orientation[hash_num]

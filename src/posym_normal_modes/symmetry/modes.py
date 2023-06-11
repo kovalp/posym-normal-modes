@@ -13,13 +13,14 @@ class SymmetryModes(SymmetryMoleculeBase):
 
         self._modes = modes
 
-        rotmol = R.from_euler('zyx', self._angles, degrees=True)
+        rot = R.from_euler('zyx', self._angles, degrees=True)
 
         self._mode_measures = []
         for operation in self._pg.operations:
             mode_measures = []
             for op in self._pg.get_sub_operations(operation.label):
-                mode_m = op.get_measure_modes(self._coordinates, self._modes, self._symbols, orientation=rotmol)
+                mode_m = op.get_measure_modes(self._coordinates, self._modes, self._symbols,
+                                              orientation=rot)
                 mode_measures.append(mode_m)
 
             mode_measures = np.array(mode_measures)
@@ -41,7 +42,8 @@ class SymmetryModes(SymmetryMoleculeBase):
 
         total_state = pd.Series(mode_measures_total, index=self._pg.op_labels)
 
-        super().__init__(group, self._coordinates, self._symbols, total_state, self._angles, [0, 0, 0])
+        super().__init__(group, self._coordinates, self._symbols, total_state, self._angles,
+                         [0, 0, 0])
 
     def get_state_mode(self, n):
         return SymmetryBase(group=self._group, rep=pd.Series(self._mode_measures[n],
@@ -53,7 +55,7 @@ class SymmetryModesFull(SymmetryMoleculeBase):
 
         self._setup_structure(coordinates, symbols, group, None, orientation_angles)
 
-        rotmol = R.from_euler('zyx', self._angles, degrees=True)
+        rot = R.from_euler('zyx', self._angles, degrees=True)
 
         trans_rots = []
         for label in self._pg.ir_table.rotations + self._pg.ir_table.translations:
@@ -65,8 +67,9 @@ class SymmetryModesFull(SymmetryMoleculeBase):
         for operation in self._pg.operations:
             mode_measures = []
             for op in self._pg.get_sub_operations(operation.label):
-                measure_xyz = op.get_measure_xyz(orientation=rotmol)
-                measure_atom = op.get_measure_atom(self._coordinates, self._symbols, orientation=rotmol)
+                measure_xyz = op.get_measure_xyz(orientation=rot)
+                measure_atom = op.get_measure_atom(self._coordinates, self._symbols,
+                                                   orientation=rot)
 
                 mode_measures.append(measure_xyz * measure_atom)
 
@@ -75,4 +78,5 @@ class SymmetryModesFull(SymmetryMoleculeBase):
 
         self._mode_measures = np.array(self._mode_measures, dtype=object).flatten() - trans_rots
         total_state = pd.Series(self._mode_measures, index=self._pg.op_labels)
-        super().__init__(group, self._coordinates, self._symbols, total_state, self._angles, [0, 0, 0])
+        super().__init__(group, self._coordinates, self._symbols, total_state, self._angles,
+                         [0, 0, 0])
