@@ -18,3 +18,7 @@ def test_normal_modes() -> None:
 
     for i, mode_ref in enumerate(('A1', 'A1', 'B2')):
         assert str(sym_modes_gs.get_state_mode(i)) == mode_ref
+
+
+if __name__ == '__main__':
+    test_normal_modes()

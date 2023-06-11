@@ -1,7 +1,7 @@
 import numpy as np
 
 from posym_normal_modes.operations import Operation
-from posym_normal_modes.permutations import get_permutation, get_measure
+from posym_normal_modes.permutations import get_permutation, get_measure, Permutations
 
 
 def prepare_vector(positions, vector):
@@ -21,8 +21,6 @@ class Inversion(Operation):
 
     def __eq__(self, other):
         return hash(self) == hash(other)
-
-
 
     def get_measure_modes(self, coordinates, modes, symbols, orientation=None):
 
@@ -59,15 +57,14 @@ class Inversion(Operation):
 
         return np.sum(measure_mode)
 
-    def get_measure_pos(self, coordinates, symbols, orientation=None, normalized=True):
-
-        operation = inversion()
-        mesure_coor = get_measure(operation, coordinates, symbols)
+    @staticmethod
+    def get_measure_pos(permutations: Permutations, orientation=None, normalized=True) -> float:
+        measure = permutations.get_measure(inversion())
 
         if normalized:
-            mesure_coor /= np.einsum('ij, ij -> ', coordinates, coordinates)
+            measure /= permutations.norm
 
-        return mesure_coor
+        return measure
 
     def get_overlap_func(self, op_function1, op_function2, orientation=None):
 

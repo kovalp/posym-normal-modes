@@ -1,5 +1,7 @@
-from posym_normal_modes.operations import Operation
 import numpy as np
+
+from posym_normal_modes.operations import Operation
+from posym_normal_modes.permutations import Permutations
 
 
 class Identity(Operation):
@@ -26,11 +28,9 @@ class Identity(Operation):
     def get_overlap_func(self, op_function1, op_function2, orientation=None):
         return (op_function1*op_function2).integrate
 
-    def get_measure_pos(self, coordinates, symbols, orientation=None, normalized=True):
-        if normalized:
-            return 1.0
-        else:
-            return np.einsum('ij, ij -> ', coordinates, coordinates)
+    @staticmethod
+    def get_measure_pos(permutations: Permutations, orientation=None, normalized=True) -> float:
+        return 1.0 if normalized else permutations.norm
 
     def apply_rotation(self, orientation):
         pass

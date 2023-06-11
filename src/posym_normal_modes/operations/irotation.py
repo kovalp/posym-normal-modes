@@ -1,7 +1,7 @@
 import numpy as np
 
 from posym_normal_modes.operations import Operation
-from posym_normal_modes.permutations import get_permutation, get_measure
+from posym_normal_modes.permutations import get_permutation, get_measure, Permutations
 from posym_normal_modes.operations.rotation import rotation
 from posym_normal_modes.operations.reflection import reflection
 from posym_normal_modes.tools import standardize_vector
@@ -33,12 +33,10 @@ class ImproperRotation(Operation):
         return hash(self) == hash(other)
 
     def get_measure_modes(self, coordinates, modes, symbols, orientation=None):
-
         rotated_axis = self._axis if orientation is None else orientation.apply(self._axis)
 
         measure_mode = []
         for angle in [2 * np.pi / self._order * self._exp, -2 * np.pi / self._order * self._exp]:
-        # for angle in np.arange(2*np.pi/self._order, 2*np.pi, 2*np.pi/self._order)[::2]:
             operation1 = rotation(angle, rotated_axis)
             operation2 = reflection(rotated_axis)
             operation = np.dot(operation2, operation1)
@@ -63,7 +61,6 @@ class ImproperRotation(Operation):
         return measure_mode_total
 
     def get_measure_atom(self, coordinates, symbols, orientation=None):
-
         rotated_axis = self._axis if orientation is None else orientation.apply(self._axis)
 
         angle = 2 * np.pi / self._order * self._exp
@@ -98,26 +95,25 @@ class ImproperRotation(Operation):
 
         return np.sum(measure_mode_total)
 
-    def get_measure_pos(self, coordinates, symbols, orientation=None, normalized=True):
-
+    def get_measure_pos(self, permutations: Permutations, orientation=None, normalized=True):
         rotated_axis = self._axis if orientation is None else orientation.apply(self._axis)
+        angle1 = 2 * np.pi / self._order * self._exp
+        operation1 = rotation(angle1, rotated_axis)
+        operation2 = reflection(rotated_axis)
+        operation = np.dot(operation2, operation1)
+        measure1 = permutations.get_measure(operation)
 
-        measure_coor = []
-        for angle in [2 * np.pi / self._order * self._exp, -2 * np.pi / self._order * self._exp]:
-        # for angle in np.arange(2*np.pi/self._order, 2*np.pi, 2*np.pi/self._order)[::2]:
-            operation1 = rotation(angle, rotated_axis)
-            operation2 = reflection(rotated_axis)
-            operation = np.dot(operation2, operation1)
+        operation1 = rotation(-angle1, rotated_axis)
+        operation2 = reflection(rotated_axis)
+        operation = np.dot(operation2, operation1)
+        measure2 = permutations.get_measure(operation)
 
-            mesure_coor = get_measure(operation, coordinates, symbols)
-            measure_coor.append(mesure_coor)
-
-        measure_coor_total = np.average(measure_coor)
+        measure = (measure1 + measure2) / 2.0
 
         if normalized:
-            measure_coor_total /= np.einsum('ij, ij -> ', coordinates, coordinates)
+            measure /= permutations.norm
 
-        return measure_coor_total
+        return measure
 
     def get_overlap_func(self, op_function1, op_function2, orientation=None):
 
